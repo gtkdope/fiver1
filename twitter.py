@@ -184,18 +184,13 @@ Follow people who use a certain hashtag
 
 """
 def follow_hashtag(api,need_hashtag):
-    count = 0
-    for follower in tweepy.Cursor(api.search, q=need_hashtag).items():
-        if count < 3:
-            person = follower.author.screen_name
-            try:
-                api.create_friendship(screen_name = person)
-                logger.info(f"Followed  {person}")
-                count  += 1
-            except:
-                continue
-        else:
-            break
+    for follower in tweepy.Cursor(api.search, q=need_hashtag).items(2):
+        person = follower.author.screen_name
+        try:
+            api.create_friendship(screen_name = person)
+            logger.info(f"Followed  {person}")
+        except:
+            continue
 
 
 def DM(api,screen_name,text):
