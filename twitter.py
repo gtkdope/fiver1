@@ -8,15 +8,10 @@ from os import environ
 from datetime import datetime, timedelta
 
 
-"""consumer_key=environ['consumer_key']
+consumer_key=environ['consumer_key']
 consumer_secret=environ['consumer_secret']
 token=environ['token']
-token_secret=environ['token_secret']"""
-
-consumer_key='mS0PvUX4uVGEckvekGdg0kL5V'
-consumer_secret='AhUQb0a37F3M2wXu0b2ylcQU0IwGE3ifY89aeJBKFDMJbhhSsC'
-token='2417138168-J9ah4KG394V4XaOAEhWehGlvxNeKb7IorlCKmFH'
-token_secret='2ivcv9otUYPWXC9zOC6pdzzaoxN2VaD8EbxeYcZInK3MM'
+token_secret=environ['token_secret']
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(token,token_secret)
