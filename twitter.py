@@ -1,3 +1,4 @@
+from typing import Counter
 import tweepy
 import logging
 import time
@@ -7,10 +8,15 @@ from os import environ
 from datetime import datetime, timedelta
 
 
-consumer_key=environ['consumer_key']
+"""consumer_key=environ['consumer_key']
 consumer_secret=environ['consumer_secret']
 token=environ['token']
-token_secret=environ['token_secret']
+token_secret=environ['token_secret']"""
+
+consumer_key='mS0PvUX4uVGEckvekGdg0kL5V'
+consumer_secret='AhUQb0a37F3M2wXu0b2ylcQU0IwGE3ifY89aeJBKFDMJbhhSsC'
+token='2417138168-J9ah4KG394V4XaOAEhWehGlvxNeKb7IorlCKmFH'
+token_secret='2ivcv9otUYPWXC9zOC6pdzzaoxN2VaD8EbxeYcZInK3MM'
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(token,token_secret)
@@ -19,10 +25,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 """
-
 This function will search for tweets that mention your Twitter 
 handle and will like and retweet each tweet it finds
-
 """
 
 def fav_retweet(api):
@@ -51,10 +55,8 @@ def fav_retweet(api):
 
 
 """ 
-
 This function will search for tweets that mention any given Twitter 
 handle and will like and retweet each tweet it finds
-
 """
 
 def fav_retweet_user(api, user_handle):
@@ -85,7 +87,6 @@ def fav_retweet_user(api, user_handle):
 
 """
 Follow All Your Followers
-
 """
 
 def follow_followers(api):
@@ -99,9 +100,7 @@ def follow_followers(api):
                 pass
 
 """
-
 Unfollow a given Id or everyone you follow
-
 """
 
 def unfollow(api, follower_id = None):
@@ -124,15 +123,14 @@ def unfollow(api, follower_id = None):
 """
 Retweet the tweets that have given  hashtags
 Hastags needs to be supplid in a python list
-
 """
 
 def retweet_tweets_with_hashtag(api, need_hashtags):
     if type(need_hashtags) is list:
         search_query = f"{need_hashtags} -filter:retweets"
         tweets = api.search(q=search_query, lang ="en", tweet_mode='extended')
-        if len(tweets) > 3:
-            tweets= tweets[:3]
+        if len(tweets) > 2:
+            tweets= tweets[:2]
         for tweet in tweets:
             hashtags = [i['text'].lower() for i in tweet.__dict__['entities']['hashtags']]
             try:
@@ -154,7 +152,6 @@ def retweet_tweets_with_hashtag(api, need_hashtags):
 """
 Tweet Daily the date and time
 not need for this project
-
 """
 
 def tweet_daily(api, last_tweeted, text):
@@ -181,7 +178,6 @@ def tweet_daily(api, last_tweeted, text):
 
 """
 Follow people who use a certain hashtag
-
 """
 def follow_hashtag(api,need_hashtag):
     for follower in tweepy.Cursor(api.search, q=need_hashtag).items(2):
@@ -217,6 +213,33 @@ def get_tweets (api,screen_name):
         except:
             continue
 
+"""
+Follow people who follow a given user
+"""
+
+def follow_followers_others(api,screen_name):
+    logger.info("Retrieving and following followers")
+    for follower in tweepy.Cursor(api.followers,screen_name).items(10):
+        if not follower.following:
+            try:
+                follower.follow()
+                logger.info(f"Following {follower.name}")
+            except tweepy.error.TweepError:
+                pass
+
+"""
+Follow the people followed by a give user (follow following of a user)
+"""
+
+def follow_following_others(api,screen_name):
+    logger.info("Retrieving and following following")
+    for follower in tweepy.Cursor(api.friends,screen_name).items(10):
+        if not follower.following:
+            try:
+                follower.follow()
+                logger.info(f"Following {follower.name}")
+            except tweepy.error.TweepError:
+                pass
 
 
         
@@ -273,11 +296,11 @@ follow_hashtag(api,"#Shorts")"""
 #Dm a given recipient
 """
 DM(api,"@ChrissyCostanza","text123")
-
 """
 
 
 if __name__=='__main__':
+    flag=0
     while True:
         #Retwetting given hastags and following 5 people who use the hashtag
         f = open ('hashtags.txt','r')
@@ -285,7 +308,7 @@ if __name__=='__main__':
             
             Tag=Tag.rstrip()
             retweet_tweets_with_hashtag(api,[Tag])
-            follow_hashtag(api,Tag)
+            #follow_hashtag(api,Tag)
             logger.info("Waiting...")
             time.sleep(30)
         f.close()
@@ -299,13 +322,12 @@ if __name__=='__main__':
             
             get_tweets(api,User)
             logger.info("Waiting...")
-            time.sleep(30)
+            if flag %5 == 0:
+                follow_followers_others(api,User)
+                time.sleep(30)
+                follow_following_others(api,User)
         f.close()
+        flag+=1
 
         logger.info("Done retweeting tweets from important people")
         time.sleep(3600)
-
-
-
-
-
