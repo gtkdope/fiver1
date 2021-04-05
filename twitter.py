@@ -325,4 +325,4 @@ if __name__=='__main__':
         flag+=1
 
         logger.info("Done retweeting tweets from important people")
-        time.sleep(36)
+        time.sleep(3600)
