@@ -305,7 +305,7 @@ if __name__=='__main__':
             retweet_tweets_with_hashtag(api,[Tag])
             #follow_hashtag(api,Tag)
             logger.info("Waiting...")
-            time.sleep(30)
+            time.sleep(300)
         f.close()
 
         logger.info("Retwetting hashtag finished now waiting for starting retwetting important people")
@@ -321,6 +321,7 @@ if __name__=='__main__':
                 follow_followers_others(api,User)
                 time.sleep(30)
                 follow_following_others(api,User)
+            time.sleep(300)
         f.close()
         flag+=1
 
